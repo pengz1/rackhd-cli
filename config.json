@@ -1,0 +1,9 @@
+{
+    "rackhdConfigFile": "/opt/monorail/config.json",
+    "rackhdRepo": "/home/onrack/src/",
+    "rackhdDefaultRepo": "/var/renasar/",
+    "rackhdServices":
+        ["on-http", "on-taskgraph", "on-syslog", "on-tftp", "on-dhcp-proxy"],
+    "database": "mongo",
+    "rackhdApi": "http://172.31.128.1:9080/api"
+}
