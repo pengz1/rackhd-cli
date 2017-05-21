@@ -1,20 +1,23 @@
 #!/usr/bin/env python
-
+"""
+RackHD Service operations
+"""
+import os
 import local_utils as utils
 
 class RackhdServices(object):
     """
     RackHD services test suite
     """
-    def __init__(self):
-        self.source_code_path = CONFIGURATION.get("rackhdRepo")
+    def __init__(self, services=None):
+        self.source_code_path = utils.CONFIGURATION.get("rackhdRepo", "/var/renasar/")
         self.is_regular_repo = (self.source_code_path == "/var/renasar") or (
             self.source_code_path == "/var/renasar/")
-        self.services = CONFIGURATION.get("rackhdServices")
-        self.heartbeat_unavailable_flags = self.services[:]
-        self.amqp_address = {"host": "localhost", "port": 5672}
-        self.amqp_connect_timeout = 20
-        self.amqp_connection = {}
+        if not services:
+            self.services = utils.CONFIGURATION.get("rackhdServices")
+        else:
+            self.services = services
+        self.path = os.path.split(os.path.realpath(__file__))[0]#os.getcwd()
 
     def __get_version_from_dpkg(self, service):
         """
@@ -67,12 +70,12 @@ class RackhdServices(object):
         :param operator: operator for RackHD service, should be "start" or "stop"
         """
         for service in self.services:
-            description = "{} RackHD service {}".format(operator.capitalize(), service)
+            #description = "{} RackHD service {}".format(operator.capitalize(), service)
             cmd = ["service", service, operator]
             result = utils.robust_check_output(cmd)
             if not result["exit_code"]:
                 result["message"] = ""
-            Logger.record_command_result(description, 'error', result)
+            #Logger.record_command_result(description, 'error', result)
 
     def __get_pid_executing_path(self, pid):
         """
@@ -99,7 +102,7 @@ class RackhdServices(object):
             kill_pid_cmd = ["kill", "-9", pid]
             result = utils.robust_check_output(kill_pid_cmd)
             description = "Stop RackHD service {}".format(pid_service_name)
-            Logger.record_command_result(description, 'error', result)
+            # Logger.record_command_result(description, 'error', result)
 
     def __start_user_rackhd(self):
         """
@@ -107,10 +110,11 @@ class RackhdServices(object):
         """
         for service in self.services:
             description = "Start RackHD service {}".format(service)
+            print description
             os.chdir(os.path.join(self.source_code_path, service))
-            cmd = ["node index.js > ./log/{}.log 2>&1 &".format(service)]  # RackHD services need run in background
+            cmd = ["sudo node index.js > {}/log/{}.log 2>&1 &".format(self.path, service)]  # RackHD services need run in background
             result = utils.robust_check_output(cmd=cmd, shell=True)
-            Logger.record_command_result(description, 'error', result)
+            #Logger.record_command_result(description, 'error', result)
 
     def start_rackhd_services(self):
         """

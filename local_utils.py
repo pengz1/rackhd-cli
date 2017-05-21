@@ -19,7 +19,10 @@ def get_configurations():
     """
     Get configurations from configure files
     """
-    rackhd_bist_config = robust_load_json_file("./config.json")
+    # configure file should be under command executing path
+    path = os.path.split(os.path.realpath(__file__))[0]
+    path = os.path.join(path, "config.json")
+    rackhd_bist_config = robust_load_json_file(path)
     if rackhd_bist_config["exit_code"]:
         print rackhd_bist_config["message"]
         sys.exit(-1)
@@ -135,47 +138,3 @@ def create_rackhd_api(option):
     return command
 
 CONFIGURATION = get_configurations()
-
-class Logger(object):
-    """
-    RackHD BIST specified logging class
-    """
-    def __init__(self):
-        self.name = "rackhd_bist_log"
-        self.path = os.path.join(os.getcwd(), "log/")
-        self.logger = initiate_logger(self.name, self.path)
-        self.indent = "  "
-        self.details_indent = "    "
-        self.colored_headers = {
-            "warning": "\033[93m" + self.indent + u'\u2717'.encode('utf8') + " ", # yellow
-            "error": "\033[91m" + self.indent + u'\u2718'.encode('utf8') + " ", # red
-            "debug": "\033[92m" + self.indent + u'\u2713'.encode('utf8') + " ", # green
-            "info": "\033[92m" + self.indent + '-' + " ", # green
-            "details": "\033[90m" + self.details_indent, # grey
-            "title": "\033[1m", # bold
-            "end": "\033[0m" # end
-        }
-
-    def create_colored_log(self, log, color):
-        """
-        Print class name
-        """
-        colored_log = '{0}{1}{2}'.format(color, log, self.colored_headers["end"])
-        return colored_log
-
-    def record_command_result(self, description, level, status):
-        """
-        Logging according command output
-        :param status: return of robust_check_output, robust_open_file or robust_load_json_file,
-            an example:
-            {"exit_code": 0, "message": "check_call command succeeded"}
-        :param description: short log description for a test
-        :param level: logging level if test failed
-        """
-        details = status["message"].strip("\n")
-        if status["exit_code"] == 0:
-            level = 'debug'
-            #description = description + " succeeded"
-        else:
-            description = description + " failed"
-        self.record_log_message(description, level, details)
