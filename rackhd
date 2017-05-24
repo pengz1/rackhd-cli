@@ -24,7 +24,7 @@ ARG_PARSER.add_argument('-pwd', action='store', default='admin',
 ARG_PARSER.add_argument('-user', action='store', default='admin',
                         help='specify username')
 ARG_PARSER.add_argument('-g', '--graph', action='store', dest='graph',
-                        help='specify username')
+                        help='specify graph')
 ARG_PARSER.add_argument('--pack', action='store', dest='pack',
                         help='specify sku packs')
 
@@ -65,6 +65,10 @@ ARG_PARSER.add_argument('--method', action='store', dest='method',
 #RackHD GET all API arguments, first two lowercase characters
 ARG_PARSER.add_argument('-co', action='store_const', dest='opr', const='configs',
                         help='Get all configs')
+ARG_PARSER.add_argument('-ca', action='store_const', dest='opr', const='catalogs',
+                        help='Get all configs')
+ARG_PARSER.add_argument('-po', action='store_const', dest='opr', const='pollers',
+                        help='Get all poller')
 ARG_PARSER.add_argument('-wo', action='store_const', dest='opr', const='workflows',
                         help='Get all workflows/graphs')
 ARG_PARSER.add_argument('-ho', action='store_const', dest='opr', const='hooks',
@@ -99,13 +103,15 @@ ARG_PARSER.add_argument('--discovery', action='store', default='', dest='id_opr'
                         help='run discovery workflow')
 
 #Service operation
-ARG_PARSER.add_argument('--start', action='store', dest='service',
+ARG_PARSER.add_argument('--services', action='store', dest='services',
+                        help='RackHD services')
+ARG_PARSER.add_argument('--start', action='store_const', dest='service', const='start',
                         help='start RackHD service')
-ARG_PARSER.add_argument('--stop', action='store', dest='service', nargs='?',
+ARG_PARSER.add_argument('--stop', action='store_const', dest='service', const='stop',
                         help='stop RackHD operation')
-ARG_PARSER.add_argument('--restart', action='store', dest='service',
+ARG_PARSER.add_argument('--restart', action='store_const', dest='service', const='restart',
                         help='restart RackHD operation')
-ARG_PARSER.add_argument('--version', action='store', dest='service',
+ARG_PARSER.add_argument('--version', action='store_const', dest='service', const='version',
                         help='get RackHD version operation')
 ARG_PARSER.add_argument('--service', action='store', dest='service',
                         choices=['start', 'stop', 'restart', 'version'],
@@ -121,16 +127,13 @@ ARG_PARSER.add_argument('--path', action='store_true', dest='path',
 #return a tuple with 0: recognized commands namespace and 1: unparsed commands
 ARG_LIST, ARG_LIST_UNKNOWN = ARG_PARSER.parse_known_args()
 
-def operate_rackhd_service(service):
+def operate_rackhd_service(operator, services):
     '''
     Operate RackHD services.
     '''
-    operator = sys.argv[1].split('-')[-1]
     operator = operator + '_rackhd_services'
-    if service == 'all':
+    if services == 'all':
         services = None
-    else:
-        services = service.split(',') #mutiple services should be connected via ','
     rackhd = rackhd_services.RackhdServices(services)
     getattr(rackhd, operator)()
 
@@ -157,7 +160,7 @@ def parse_api_options(args):
         'method': args.method,
         # GET, DELETE don't require header
         'url': None,
-        'header': json.dumps(args.header),
+        'header': args.header,
         'payload': args.payload or ''
     }
     url_path = '/{}/{}'.format(api_string, api_ver)
@@ -199,14 +202,25 @@ def parse_all_args(unknown_args, known_args):
     args = parser(unknown_args, known_args)
     return args
 
-if __name__ == '__main__':
+def run():
+    """
+    Run commands
+    """
     arg_utils.parse_all_known(ARG_LIST)
     if ARG_LIST_UNKNOWN:
         parse_all_args(ARG_LIST_UNKNOWN, ARG_LIST)
     if ARG_LIST.service:
-        operate_rackhd_service(ARG_LIST.service)
+        arg_utils.parse_unknown_service_args(ARG_LIST_UNKNOWN, ARG_LIST)
+        operate_rackhd_service(ARG_LIST.service, ARG_LIST.services)
+    elif ARG_LIST.cancel:
+        pass
+    elif ARG_LIST.id_opr:
+        pass
     elif ARG_LIST.opr:
         options = parse_api_options(ARG_LIST)
-        request = getattr(http_request, 'http_{}'.format(options['method']))
+        request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
         res = request(options)
         print res.content
+
+if __name__ == '__main__':
+    run()

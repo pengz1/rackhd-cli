@@ -11,10 +11,11 @@ def http_post(options):
     :param data: data to be post
     :param header: request header
     '''
+    data = ''
     header = options['header'] or {'content-type': 'applicaton/json'}
     if header == {'content-type': 'applicaton/json'}:
         data = json.dumps(options['payload'])
-    req = requests.post(url=options['url'], data=data, header=header)
+    req = requests.post(url=options['url'], data=data, headers=header)
     return req
 
 def http_get(options):
@@ -33,7 +34,7 @@ def http_delete(options):
     req = requests.delete(options['url'])
     return req
 
-def http_put(url, data, header):
+def http_put(options):
     '''
     implement http DELETE.
     :param url: http url link
@@ -41,10 +42,10 @@ def http_put(url, data, header):
     header = options['header'] or {'content-type': 'applicaton/json'}
     if header == {'content-type': 'applicaton/json'}:
         data = json.dumps(options['payload'])
-    req = requests.put(url=url, data=data, header=header)
+    req = requests.put(url=options['url'], data=data, headers=header)
     return req
 
-def http_patch(url, data, header):
+def http_patch(options):
     '''
     implement http DELETE.
     :param url: http url link
@@ -52,5 +53,5 @@ def http_patch(url, data, header):
     header = options['header'] or {'content-type': 'applicaton/json'}
     if header == {'content-type': 'applicaton/json'}:
         data = json.dumps(options['payload'])
-    req = requests.patch(url=url, data=data, header=header)
+    req = requests.patch(url=options['url'], data=data, header=header)
     return req

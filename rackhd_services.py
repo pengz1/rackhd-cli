@@ -97,11 +97,15 @@ class RackhdServices(object):
                             'sed "/sudo/d" | awk \'{print $2}\' | sort -r -n']
         output = utils.robust_check_output(cmd=get_pid_cmd, shell=True)
         process_list = output["message"].strip("\n").split("\n")
+        if process_list == ['']:
+            print 'No RackHD service is running'
+            return
         for pid in process_list:
             pid_service_name = self.__get_pid_executing_path(pid).split("/")[-1]
-            kill_pid_cmd = ["kill", "-9", pid]
+            kill_pid_cmd = ["sudo", "kill", "-9", pid]
             result = utils.robust_check_output(kill_pid_cmd)
             description = "Stop RackHD service {}".format(pid_service_name)
+            print description
             # Logger.record_command_result(description, 'error', result)
 
     def __start_user_rackhd(self):

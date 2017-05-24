@@ -7,6 +7,8 @@
     Local utilities
 """
 
+import mongo_utils as mongo
+
 def parse_unknown_node_args(unknown_args, known_args):
     """
     parse unknown arguments for node
@@ -20,12 +22,17 @@ def parse_unknown_node_args(unknown_args, known_args):
     known_args.opr = 'nodes'
     return known_args
 
-def parse_unknown_install_args():
+def parse_unknown_service_args(unknown_args, known_args):
     """
     parse unknown arguments for node
     """
+    assert len(unknown_args) <= 1, 'unrecognized positional arguments for service'
+    if len(unknown_args) == 0:
+        known_args.services = 'all'
+    else:
+        known_args.services = unknown_args[0].split(',')
 
-def parse_unknown_service_args():
+def parse_unknown_install_args():
     """
     parse unknown arguments for node
     """
@@ -39,15 +46,18 @@ def parse_all_known(known_args):
     """
     parse unknown arguments for node
     """
-    known_args.method = (known_args.method or 'GET').lower()
+    known_args.method = known_args.method or 'GET'
+    if known_args.identity:
+        if not known_args.opr:
+            known_args.opr = mongo.mongo.find_operator_by_id(known_args.identity)
     if known_args.graph:
         known_args.opr = 'workflows'
-        graph = known_args.graph
-        if graph.startswith('Graph'):
-            graph = '.'.join(graph.split('.')[1:])
+        known_args.method = 'POST'
+        if not known_args.graph.startswith('Graph'):
+            known_args.graph = 'Graph.' + known_args.graph
     if known_args.pack:
         known_args.opr = 'skus'
     if known_args.method in ['GET', 'DELETE']:
         known_args.header = None
     if known_args.header:
-        known_args.header = '{{"content-type": "{}"}}'.format(known_args.header)
+        known_args.header = {"content-type": known_args.header}

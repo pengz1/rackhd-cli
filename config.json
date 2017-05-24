@@ -4,7 +4,13 @@
     "rackhdDefaultRepo": "/var/renasar/",
     "rackhdServices":
         ["on-http", "on-taskgraph", "on-syslog", "on-tftp", "on-dhcp-proxy"],
-    "database": "mongo",
     "rackhdApi": "http://172.31.128.1:9080/api",
-    "apiVersion": "current"
+    "apiVersion": "current",
+    "database": {
+        "name": "mongo",
+        "address": "localhost",
+        "port": 27017,
+        "db": "pxe",
+        "collections": ["nodes", "workitems", "skus", "obm", "lookups", "ibm", "workflows", "catalogs"]
+    }
 }
