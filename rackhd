@@ -5,9 +5,8 @@
 '''
 This script is a command line implementation for RackHD
 '''
+
 import os
-import sys
-import json
 import argparse
 import urlparse
 import rackhd_services
@@ -44,7 +43,7 @@ ARG_PARSER.add_argument('-p', '--payload', action='store',
 ARG_PARSER.add_argument('-P', '--parameter', action='store',
                         dest='param', help='specify payload')
 ARG_PARSER.add_argument('-H', '--header', action='store', dest='header',
-                        default='application/json',
+                        #default='application/json',
                         help='specify content-type header')
 #Http configuration, specify http methods
 ARG_PARSER.add_argument('-PU', '--PUT', action='store_const', const='PUT',
@@ -91,15 +90,15 @@ ARG_PARSER.add_argument('-ib', action='store_const', dest='opr', const='ibms',
                         help='Get all ibms')
 
 #Frequently used id operations, Get id types from database
-ARG_PARSER.add_argument('--cancel', '-C', action='store', default='', dest='id_opr',
+ARG_PARSER.add_argument('--cancel', '-C', action='store', default='',
                         help='delete active workflow via node id')
-ARG_PARSER.add_argument('--delete', '-D', action='store', default='', dest='id_opr',
+ARG_PARSER.add_argument('--delete', '-D', action='store', default='',
                         help='delete id')
-ARG_PARSER.add_argument('--get', '-G', action='store', default='', dest='id_opr',
+ARG_PARSER.add_argument('--get', '-G', action='store', default='',
                         help='get id')
-ARG_PARSER.add_argument('--moc', '-M', action='store', default='', dest='id_opr',
+ARG_PARSER.add_argument('--mock', '-M', action='store', default='',
                         help='run ubuntu mock workflow')
-ARG_PARSER.add_argument('--discovery', action='store', default='', dest='id_opr',
+ARG_PARSER.add_argument('--discovery', action='store', default='',
                         help='run discovery workflow')
 
 #Service operation
@@ -156,11 +155,16 @@ def parse_api_options(args):
     api_ver = args.ver or 'current'
     api_string = 'api'
     query = ''
+
+    if args.header != 'application/json':
+        header = args.header
+    else:
+        header = {'content-type': 'application/json'}
     options = {
         'method': args.method,
         # GET, DELETE don't require header
         'url': None,
-        'header': args.header,
+        'header': header,
         'payload': args.payload or ''
     }
     url_path = '/{}/{}'.format(api_string, api_ver)
@@ -212,15 +216,10 @@ def run():
     if ARG_LIST.service:
         arg_utils.parse_unknown_service_args(ARG_LIST_UNKNOWN, ARG_LIST)
         operate_rackhd_service(ARG_LIST.service, ARG_LIST.services)
-    elif ARG_LIST.cancel:
-        pass
-    elif ARG_LIST.id_opr:
-        pass
     elif ARG_LIST.opr:
         options = parse_api_options(ARG_LIST)
         request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
         res = request(options)
         print res.content
-
 if __name__ == '__main__':
     run()

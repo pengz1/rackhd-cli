@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# -*- coding: UTF-8 -*-
+
 import json
 import requests
 
@@ -11,9 +13,9 @@ def http_post(options):
     :param data: data to be post
     :param header: request header
     '''
-    data = ''
-    header = options['header'] or {'content-type': 'applicaton/json'}
-    if header == {'content-type': 'applicaton/json'}:
+    data = None
+    header = options['header'] or {'content-type': 'application/json'}
+    if header == {'content-type': 'application/json'} and options['payload']:
         data = json.dumps(options['payload'])
     req = requests.post(url=options['url'], data=data, headers=header)
     return req
@@ -39,9 +41,10 @@ def http_put(options):
     implement http DELETE.
     :param url: http url link
     '''
-    header = options['header'] or {'content-type': 'applicaton/json'}
-    if header == {'content-type': 'applicaton/json'}:
-        data = json.dumps(options['payload'])
+    data = None
+    header = options['header'] or {'content-type': 'application/json'}
+    if header.get('content-type') == 'application/json':
+        data = options['payload']
     req = requests.put(url=options['url'], data=data, headers=header)
     return req
 
@@ -50,8 +53,8 @@ def http_patch(options):
     implement http DELETE.
     :param url: http url link
     '''
-    header = options['header'] or {'content-type': 'applicaton/json'}
-    if header == {'content-type': 'applicaton/json'}:
+    header = options['header'] or {'content-type': 'application/json'}
+    if header == {'content-type': 'application/json'}:
         data = json.dumps(options['payload'])
     req = requests.patch(url=options['url'], data=data, header=header)
     return req
