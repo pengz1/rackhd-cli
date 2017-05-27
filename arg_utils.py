@@ -47,6 +47,22 @@ def parse_all_known(known_args):
     parse unknown arguments for node
     """
     known_args.method = known_args.method or 'GET'
+    if known_args.cancel:
+        known_args.opr = 'nodes'
+        known_args.subopr = 'workflows'
+        known_args.identity = known_args.cancel
+        known_args.param = 'action'
+        known_args.payload = '{"command":"cancel"}'
+        known_args.method = 'PUT'
+        known_args.header = {'content-type': 'application/json'}
+        return known_args
+    if known_args.mock:
+        known_args.opr = 'nodes'
+        known_args.subopr = 'workflows'
+        known_args.identity = known_args.mock
+        known_args.graph = 'Graph.BootstrapUbuntuMocks'
+        known_args.method = 'POST'
+        return known_args
     if known_args.identity:
         if not known_args.opr:
             known_args.opr = mongo.mongo.find_operator_by_id(known_args.identity)

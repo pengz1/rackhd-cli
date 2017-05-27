@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# -*- coding: UTF-8 -*-
+
 import json
 import requests
 
@@ -11,9 +13,9 @@ def http_post(options):
     :param data: data to be post
     :param header: request header
     '''
-    data = ''
+    data = None
     header = options['header'] or {'content-type': 'applicaton/json'}
-    if header == {'content-type': 'applicaton/json'}:
+    if header == {'content-type': 'applicaton/json'} and options['payload']:
         data = json.dumps(options['payload'])
     req = requests.post(url=options['url'], data=data, headers=header)
     return req
@@ -39,9 +41,10 @@ def http_put(options):
     implement http DELETE.
     :param url: http url link
     '''
+    data = None
     header = options['header'] or {'content-type': 'applicaton/json'}
-    if header == {'content-type': 'applicaton/json'}:
-        data = json.dumps(options['payload'])
+    if header.get('content-type') == 'application/json':
+        data = options['payload']
     req = requests.put(url=options['url'], data=data, headers=header)
     return req
 
