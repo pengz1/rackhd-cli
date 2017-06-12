@@ -156,7 +156,7 @@ def parse_api_options(args):
     api_string = 'api'
     query = ''
 
-    if args.header:
+    if args.header != 'application/json':
         header = args.header
     else:
         header = {'content-type': 'application/json'}
