@@ -42,7 +42,11 @@ def http_put(options):
     :param url: http url link
     '''
     data = None
+<<<<<<< HEAD
     header = options['header'] or {'content-type': 'application/json'}
+=======
+    header = options['header'] or {'content-type': 'applicaton/json'}
+>>>>>>> 1a913c9204d4e4fde0e0fb76101f2647e4436a0a
     if header.get('content-type') == 'application/json':
         data = options['payload']
     req = requests.put(url=options['url'], data=data, headers=header)
