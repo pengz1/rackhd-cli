@@ -7,6 +7,7 @@ This script is a command line implementation for RackHD
 '''
 
 import os
+import json
 import argparse
 import urlparse
 import rackhd_services
@@ -41,7 +42,7 @@ ARG_PARSER.add_argument('-o', '--operator', action='store', dest='opr',
 ARG_PARSER.add_argument('-p', '--payload', action='store',
                         dest='payload', help='specify payload')
 ARG_PARSER.add_argument('-P', '--parameter', action='store',
-                        dest='param', help='specify payload')
+                        dest='param', help='specify parameters')
 ARG_PARSER.add_argument('-H', '--header', action='store', dest='header',
                         #default='application/json',
                         help='specify content-type header')
@@ -123,6 +124,12 @@ ARG_PARSER.add_argument('--path', action='store_true', dest='path',
 
 #Log operation
 
+#RackHD installation
+
+#RackHD OS install
+
+#RackHD configure
+
 #return a tuple with 0: recognized commands namespace and 1: unparsed commands
 ARG_LIST, ARG_LIST_UNKNOWN = ARG_PARSER.parse_known_args()
 
@@ -156,7 +163,7 @@ def parse_api_options(args):
     api_string = 'api'
     query = ''
 
-    if args.header != 'application/json':
+    if args.header and args.header != 'application/json':
         header = args.header
     else:
         header = {'content-type': 'application/json'}
@@ -220,6 +227,7 @@ def run():
         options = parse_api_options(ARG_LIST)
         request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
         res = request(options)
-        print res.content
+        print "{{\"data\": {}, \"api\": \"{} {}\", \"status\": {}}}".format(
+            res.content, options["method"], res.url, res.status_code)
 if __name__ == '__main__':
     run()

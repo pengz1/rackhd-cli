@@ -2,7 +2,7 @@
 
 # -*- coding: UTF-8 -*-
 
-import json
+import json as JSON
 import requests
 
 #def http_post(url, data, header):
@@ -16,8 +16,11 @@ def http_post(options):
     data = None
     header = options['header'] or {'content-type': 'application/json'}
     if header == {'content-type': 'application/json'} and options['payload']:
-        data = json.dumps(options['payload'])
+        #data = JSON.loads(options['payload']) ? why this can't work?
+        #{\'options\':{\'bootstrap-ubuntu\':{\'overlayfsFile\':\'secure.erase.overlay.cpio.gz\'}}}
+        data = options['payload']
     req = requests.post(url=options['url'], data=data, headers=header)
+    #req = requests.post(url=options['url'], json=data) json should >2.4.6
     return req
 
 def http_get(options):
@@ -44,7 +47,7 @@ def http_put(options):
     data = None
     header = options['header'] or {'content-type': 'application/json'}
     if header.get('content-type') == 'application/json':
-        data = options['payload']
+        data = JSON.loads(options['payload'])
     req = requests.put(url=options['url'], data=data, headers=header)
     return req
 
@@ -55,6 +58,6 @@ def http_patch(options):
     '''
     header = options['header'] or {'content-type': 'application/json'}
     if header == {'content-type': 'application/json'}:
-        data = json.dumps(options['payload'])
+        data = JSON.dumps(options['payload'])
     req = requests.patch(url=options['url'], data=data, header=header)
     return req
