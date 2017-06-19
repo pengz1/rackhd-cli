@@ -7,7 +7,7 @@
     Local utilities
 """
 
-import mongo_utils as mongo
+import utils.mongo_utils as mongo
 
 def parse_position_node_args(position_args, known_args):
     """
@@ -42,6 +42,16 @@ def parse_position_test_args():
     parse position arguments for node
     """
 
+def parse_position_mongo_args(position_args, known_args):
+    """
+    parse position arguments for mongo identity
+    """
+    known_args.opr = mongo.mongo.find_collection_by_id(position_args[0])
+    known_args.identity = position_args[0]
+    known_args.method = 'GET'
+    return known_args
+
+
 def parse_all_known(known_args):
     """
     parse position arguments for node
@@ -62,6 +72,11 @@ def parse_all_known(known_args):
         known_args.identity = known_args.mock
         known_args.graph = 'Graph.BootstrapUbuntuMocks'
         known_args.method = 'POST'
+        return known_args
+    if known_args.delete:
+        known_args.opr = mongo.mongo.find_collection_by_id(known_args.delete)
+        known_args.identity = known_args.delete
+        known_args.method = 'DELETE'
         return known_args
     if known_args.identity:
         if not known_args.opr:

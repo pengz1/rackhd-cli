@@ -37,7 +37,3 @@ class Mongo(object):
         return opr
 
 mongo = Mongo()
-
-if __name__ == '__main__':
-    db = Mongo()
-    print db.collections

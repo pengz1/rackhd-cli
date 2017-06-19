@@ -86,15 +86,14 @@ def parse_position_args(unknown_args, known_args):
     :param known_args: NameSpace object from argparse parse_known_args methods
     '''
     # Supported unknow commands
-    opr = unknown_args[0]
+    arg = unknown_args[0]
     pattern = re.compile("^[a-z0-9]{24}$")
-    if pattern.match(opr):
-        known_args.identity = opr
+    if pattern.match(arg):
         parser = getattr(arg_utils, 'parse_position_mongo_args')
     else:
-        assert opr in ['node', 'service', 'test', 'install', 'sku', 'log', 'config'],\
-            'Position argument {} is not supported'.format(opr)
-        parser = getattr(arg_utils, 'parse_position_{}_args'.format(opr))
+        assert arg in ['node', 'service', 'test', 'install', 'sku', 'log', 'config'],\
+            'Position argument {} is not supported'.format(arg)
+        parser = getattr(arg_utils, 'parse_position_{}_args'.format(arg))
     args = parser(unknown_args, known_args)
     return args
 
@@ -116,8 +115,8 @@ def run():
         options = parse_api_options(ARG_LIST)
         request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
         res = request(options)
-        print "{{\"data\": {}, \"_api\": \"{} {}\", \"_status\": {}}}".format(
-            res.content, options["method"], res.url, res.status_code)
+        print "{{\"data\": {}, \"_api\": \"-X{} {}\", \"_status\": {}}}".format(
+            res.content or "\"\"", options["method"], res.url, res.status_code)
 
 if __name__ == '__main__':
     run()
