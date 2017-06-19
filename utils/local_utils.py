@@ -11,16 +11,14 @@ import os
 import sys
 import re
 import json
-import time
 import subprocess
-import logging
 
-def get_configurations():
+def get_configurations(path):
     """
     Get configurations from configure files
     """
     # configure file should be under command executing path
-    path = os.path.split(os.path.realpath(__file__))[0]
+    # path = os.path.split(os.path.realpath(__file__))[0]
     path = os.path.join(path, "config.json")
     rackhd_bist_config = robust_load_json_file(path)
     if rackhd_bist_config["exit_code"]:
@@ -131,10 +129,12 @@ def create_rackhd_api(option):
     for key, value in enumerate(api_option):
         if value:
             api_option[key] = "/" + value
-    api = "/api" + api_option["version"] + api_option["opr"] + api_option["id"] + api_option["subopr"]
+    api = "/api" + api_option["version"] + \
+        api_option["opr"] + api_option["id"] + api_option["subopr"]
     param = option["param"]
     payload = "-d \'" + json.dumps(option["payload"]) + "\'"
-    command = "curl -X {0} {1} {2}{3}{4} {5} ".format(method, content_type, url, api, param, payload)
+    command = "curl -X {0} {1} {2}{3}{4} {5} ".format(
+        method, content_type, url, api, param, payload)
     return command
-
-CONFIGURATION = get_configurations()
+CONFIG_PATH = "/".join((os.path.split(os.path.realpath(__file__))[0]).split('/')[:-1]) + '/config/'
+CONFIGURATION = get_configurations(CONFIG_PATH)

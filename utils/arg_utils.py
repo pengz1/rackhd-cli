@@ -9,42 +9,42 @@
 
 import mongo_utils as mongo
 
-def parse_unknown_node_args(unknown_args, known_args):
+def parse_position_node_args(position_args, known_args):
     """
-    parse unknown arguments for node
+    parse position arguments for node
     """
-    if len(unknown_args) == 2:
-        known_args.identity = unknown_args[1]
-    elif len(unknown_args) > 2:
-        raise Exception("unrecognized arguments: {}".format(unknown_args))
+    if len(position_args) == 2:
+        known_args.identity = position_args[1]
+    elif len(position_args) > 2:
+        raise Exception("unrecognized arguments: {}".format(position_args))
     if known_args.opr:
         known_args.subopr = known_args.opr
     known_args.opr = 'nodes'
     return known_args
 
-def parse_unknown_service_args(unknown_args, known_args):
+def parse_position_service_args(position_args, known_args):
     """
-    parse unknown arguments for node
+    parse position arguments for node
     """
-    assert len(unknown_args) <= 1, 'unrecognized positional arguments for service'
-    if len(unknown_args) == 0:
+    assert len(position_args) <= 1, 'unrecognized positional arguments for service'
+    if len(position_args) == 0:
         known_args.services = 'all'
     else:
-        known_args.services = unknown_args[0].split(',')
+        known_args.services = position_args[0].split(',')
 
-def parse_unknown_install_args():
+def parse_position_install_args():
     """
-    parse unknown arguments for node
+    parse position arguments for node
     """
 
-def parse_unknown_test_args():
+def parse_position_test_args():
     """
-    parse unknown arguments for node
+    parse position arguments for node
     """
 
 def parse_all_known(known_args):
     """
-    parse unknown arguments for node
+    parse position arguments for node
     """
     known_args.method = known_args.method or 'GET'
     if known_args.cancel:
