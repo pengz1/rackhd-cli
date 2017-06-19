@@ -99,6 +99,8 @@ def parse_arguments():
                             help='run ubuntu mock workflow')
     ARG_PARSER.add_argument('--discovery', action='store', default='',
                             help='run discovery workflow')
+    ARG_PARSER.add_argument('--mongo', action='store', default='',
+                            help='run discovery workflow')
 
     #Service operation
     ARG_PARSER.add_argument('--services', action='store', dest='services',

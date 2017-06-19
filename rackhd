@@ -8,10 +8,12 @@ This script is a command line implementation for RackHD
 
 import os
 import re
+import json
 import urlparse
 from utils import rackhd_services as rackhd_services
 from utils import arg_utils as arg_utils
 from utils import arg_parser as arg_parser
+from utils import mongo_utils as mongo
 import http_request as http_request
 
 #return a tuple with 0: recognized commands namespace and 1: unparsed commands
@@ -30,6 +32,7 @@ def operate_rackhd_service(operator, services):
 def parse_api_options(args):
     '''
     Parse API operatinon options
+    :param <Object> args: Parsed RackHD CLI arguments
     '''
     address = {
         'server': '172.31.128.1',
@@ -91,7 +94,8 @@ def parse_position_args(unknown_args, known_args):
     if pattern.match(arg):
         parser = getattr(arg_utils, 'parse_position_mongo_args')
     else:
-        assert arg in ['node', 'service', 'test', 'install', 'sku', 'log', 'config'],\
+        assert arg in ['node', 'service', 'test', 'install', 'sku', \
+                       'log', 'config', 'mongo'],\
             'Position argument {} is not supported'.format(arg)
         parser = getattr(arg_utils, 'parse_position_{}_args'.format(arg))
     args = parser(unknown_args, known_args)
@@ -107,10 +111,12 @@ def run():
     if ARG_LIST.service:
         arg_utils.parse_position_service_args(ARG_LIST_UNKNOWN, ARG_LIST)
         operate_rackhd_service(ARG_LIST.service, ARG_LIST.services)
-    if ARG_LIST.test:
+    elif ARG_LIST.test:
         pass
-    if ARG_LIST.log:
+    elif ARG_LIST.log:
         pass
+    elif ARG_LIST.mongo:
+        print mongo.mongo.find_doc_by_id(ARG_LIST.mongo)
     elif ARG_LIST.opr:
         options = parse_api_options(ARG_LIST)
         request = getattr(http_request, 'http_{}'.format(options['method'].lower()))

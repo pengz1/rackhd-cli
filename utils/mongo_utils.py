@@ -4,6 +4,7 @@ Mongo interface
 """
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from bson.json_util import dumps 
 
 class Mongo(object):
     """
@@ -22,6 +23,16 @@ class Mongo(object):
             doc = self.db[collect].find_one({'_id': ObjectId(mongo_id)})
             if doc:
                 return collect
+        raise Exception('Mong id {} is invalid'.format(mongo_id))
+
+    def find_doc_by_id(self, mongo_id):
+        """
+        Find operator by id
+        """
+        for collect in self.collections:
+            doc = self.db[collect].find_one({'_id': ObjectId(mongo_id)})
+            if doc:
+                return dumps(doc)
         raise Exception('Mong id {} is invalid'.format(mongo_id))
 
     def find_operator_by_id(self, mongo_id):

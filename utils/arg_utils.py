@@ -46,11 +46,8 @@ def parse_position_mongo_args(position_args, known_args):
     """
     parse position arguments for mongo identity
     """
-    known_args.opr = mongo.mongo.find_collection_by_id(position_args[0])
-    known_args.identity = position_args[0]
-    known_args.method = 'GET'
-    return known_args
-
+    assert len(position_args) == 2, 'unrecognized positional arguments for mongo operation'
+    known_args.mongo = position_args[1]
 
 def parse_all_known(known_args):
     """
