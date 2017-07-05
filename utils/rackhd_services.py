@@ -3,7 +3,7 @@
 RackHD Service operations
 """
 import os
-import local_utils as utils
+import utils.local_utils as utils
 
 class RackhdServices(object):
     """
@@ -17,7 +17,8 @@ class RackhdServices(object):
             self.services = utils.CONFIGURATION.get("rackhdServices")
         else:
             self.services = services
-        self.path = os.path.split(os.path.realpath(__file__))[0]#os.getcwd()
+        #self.path = os.path.split(os.path.realpath(__file__))[0]#os.getcwd()
+        self.path = "/".join((os.path.split(os.path.realpath(__file__))[0]).split('/')[:-1])
 
     def __get_version_from_dpkg(self, service):
         """
@@ -55,7 +56,7 @@ class RackhdServices(object):
         Check RackHD version
         """
         for service in self.services:
-            description = "Check service {} version".format(service)
+            ##description = "Check service {} version".format(service)
             if self.is_regular_repo:
                 result = self.__get_version_from_dpkg(service)
                 if result["exit_code"]:  # if failed to get version from dpkg, try commitstring
@@ -103,7 +104,7 @@ class RackhdServices(object):
         for pid in process_list:
             pid_service_name = self.__get_pid_executing_path(pid).split("/")[-1]
             kill_pid_cmd = ["sudo", "kill", "-9", pid]
-            result = utils.robust_check_output(kill_pid_cmd)
+            utils.robust_check_output(kill_pid_cmd)
             description = "Stop RackHD service {}".format(pid_service_name)
             print description
             # Logger.record_command_result(description, 'error', result)
@@ -116,8 +117,9 @@ class RackhdServices(object):
             description = "Start RackHD service {}".format(service)
             print description
             os.chdir(os.path.join(self.source_code_path, service))
-            cmd = ["sudo node index.js > {}/log/{}.log 2>&1 &".format(self.path, service)]  # RackHD services need run in background
-            result = utils.robust_check_output(cmd=cmd, shell=True)
+            # RackHD services need run in background
+            cmd = ["sudo node index.js > {}/log/{}.log 2>&1 &".format(self.path, service)]
+            utils.robust_check_output(cmd=cmd, shell=True)
             #Logger.record_command_result(description, 'error', result)
 
     def start_rackhd_services(self):
@@ -142,6 +144,5 @@ class RackhdServices(object):
         """
         Restart RackHD Services
         """
-        self.stop_rackhd_services();
-        self.start_rackhd_services();
-
+        self.stop_rackhd_services()
+        self.start_rackhd_services()

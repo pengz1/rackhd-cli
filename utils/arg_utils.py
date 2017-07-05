@@ -7,7 +7,7 @@
     Local utilities
 """
 
-import utils.mongo_utils as mongo
+from utils.mongo_utils import mongo as mongo
 
 def parse_position_node_args(position_args, known_args):
     """
@@ -49,6 +49,20 @@ def parse_position_mongo_args(position_args, known_args):
     assert len(position_args) == 2, 'unrecognized positional arguments for mongo operation'
     known_args.mongo = position_args[1]
 
+def parse_position_identity_args(position_args, known_args):
+    """
+    parse position arguments for mongo identity
+    """
+    assert len(position_args) == 1, 'unrecognized positional arguments for mongo operation'
+    collection = mongo.find_collection_by_id(position_args[0])
+    if collection == 'workitems':
+        known_args.opr = 'pollers'
+    else:
+        known_args.opr = collection
+    known_args.identity = position_args[0]
+    known_args.method = 'GET'
+    return known_args
+
 def parse_all_known(known_args):
     """
     parse position arguments for node
@@ -69,15 +83,16 @@ def parse_all_known(known_args):
         known_args.identity = known_args.mock
         known_args.graph = 'Graph.BootstrapUbuntuMocks'
         known_args.method = 'POST'
+        known_args.payload = '{"options":{"bootstrap-ubuntu":{"overlayfsFile": "secure.erase.overlay.cpio.gz"}}}'
         return known_args
     if known_args.delete:
-        known_args.opr = mongo.mongo.find_collection_by_id(known_args.delete)
+        known_args.opr = mongo.find_collection_by_id(known_args.delete)
         known_args.identity = known_args.delete
         known_args.method = 'DELETE'
         return known_args
     if known_args.identity:
         if not known_args.opr:
-            known_args.opr = mongo.mongo.find_operator_by_id(known_args.identity)
+            known_args.opr = mongo.find_operator_by_id(known_args.identity)
     if known_args.graph:
         known_args.opr = 'workflows'
         known_args.method = 'POST'

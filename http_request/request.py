@@ -47,7 +47,7 @@ def http_put(options):
     data = None
     header = options['header'] or {'content-type': 'application/json'}
     if header.get('content-type') == 'application/json':
-        data = JSON.loads(options['payload'])
+        data = options['payload']
     req = requests.put(url=options['url'], data=data, headers=header)
     return req
 

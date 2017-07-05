@@ -8,12 +8,11 @@ This script is a command line implementation for RackHD
 
 import os
 import re
-import json
 import urlparse
 from utils import rackhd_services as rackhd_services
 from utils import arg_utils as arg_utils
 from utils import arg_parser as arg_parser
-from utils import mongo_utils as mongo
+from utils.mongo_utils import mongo as mongo
 import http_request as http_request
 
 #return a tuple with 0: recognized commands namespace and 1: unparsed commands
@@ -92,7 +91,7 @@ def parse_position_args(unknown_args, known_args):
     arg = unknown_args[0]
     pattern = re.compile("^[a-z0-9]{24}$")
     if pattern.match(arg):
-        parser = getattr(arg_utils, 'parse_position_mongo_args')
+        parser = getattr(arg_utils, 'parse_position_identity_args')
     else:
         assert arg in ['node', 'service', 'test', 'install', 'sku', \
                        'log', 'config', 'mongo'],\
@@ -116,7 +115,7 @@ def run():
     elif ARG_LIST.log:
         pass
     elif ARG_LIST.mongo:
-        print mongo.mongo.find_doc_by_id(ARG_LIST.mongo)
+        print mongo.find_doc_by_id(ARG_LIST.mongo)
     elif ARG_LIST.opr:
         options = parse_api_options(ARG_LIST)
         request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
