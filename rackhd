@@ -118,7 +118,7 @@ def run():
         print mongo.find_doc_by_id(ARG_LIST.mongo)
     elif ARG_LIST.opr:
         options = parse_api_options(ARG_LIST)
-        request = getattr(http_request, 'http_{}'.format(options['method'].lower()))
+        request = getattr(http_request, options['method'].lower())
         res = request(options)
         print "{{\"data\": {}, \"_api\": \"-X{} {}\", \"_status\": {}}}".format(
             res.content or "\"\"", options["method"], res.url, res.status_code)

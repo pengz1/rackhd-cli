@@ -83,7 +83,7 @@ def parse_all_known(known_args):
         known_args.identity = known_args.mock
         known_args.graph = 'Graph.BootstrapUbuntuMocks'
         known_args.method = 'POST'
-        known_args.payload = '{"options":{"bootstrap-ubuntu":{"overlayfsFile": "secure.erase.overlay.cpio.gz"}}}'
+        known_args.payload = known_args.payload or '{"options":{"bootstrap-ubuntu":{"overlayfsFile": "secure.erase.overlay.cpio.gz"}}}'
         return known_args
     if known_args.delete:
         known_args.opr = mongo.find_collection_by_id(known_args.delete)
