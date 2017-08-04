@@ -22,23 +22,24 @@ def unicode2str(data):
     else:
         return data
 
-def request(method, options):
+def request(options):
     '''
     Http request with payload
     :options: http options
     '''
     headers = options['header'] or {'content-type': 'application/json'}
+    method = options['method'] and options['method'].lower()
     # Without payload, will run request with {'content-type': 'application/json'}
     if not options["payload"]:
         return requests.request(
-            method=method,
+            method=method or "get",
             url=options['url'],
             headers=headers
         )
     # With payload string, will run request with {'content-type': 'application/json'}
     if not options['payload'].startswith('@'):
         return requests.request(
-            method=method,
+            method=method or "POST",
             url=options['url'],
             data=options['payload'],
             headers=headers
@@ -55,49 +56,14 @@ def request(method, options):
     else:
         f = open(filepath, 'rb')
         payload = f
-        headers = None
+        # multipart/form-data requires boundary
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+
     res = requests.request(
-        method=method,
+        method=method or "POST",
         url=options['url'],
         data=payload,
         headers=headers
     )
     f.close()
     return res
-
-def post(options):
-    '''
-    implement http POST.
-    :param url: http url link
-    :param data: data to be post
-    :param header: request header
-    '''
-    return request('post', options)
-
-def get(options):
-    '''
-    implement http GET.
-    :param url: http url link
-    '''
-    return request('get', options)
-
-def delete(options):
-    '''
-    implement http DELETE.
-    :param url: http url link
-    '''
-    return request('delete', options)
-
-def put(options):
-    '''
-    implement http DELETE.
-    :param url: http url link
-    '''
-    return request('put', options)
-
-def patch(options):
-    '''
-    implement http DELETE.
-    :param url: http url link
-    '''
-    return request('patch', options)

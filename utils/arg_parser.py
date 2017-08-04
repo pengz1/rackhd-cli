@@ -26,7 +26,7 @@ def parse_arguments():
     ARG_PARSER.add_argument('--pack', action='store', dest='pack',
                             help='specify sku packs')
 
-# API settings
+    # API settings
     ARG_PARSER.add_argument('-api', action='store', dest='api',
                             help='specify whole api path')
     ARG_PARSER.add_argument('-ver', action='store', default='current',
@@ -34,17 +34,19 @@ def parse_arguments():
     ARG_PARSER.add_argument('-i', '--identity', action='store', dest='identity',
                             help='specify id')
     ARG_PARSER.add_argument('-s', '--suboperator', action='store', dest='subopr',
-                            help='specify username')
+                            help='specify sub operator')
     ARG_PARSER.add_argument('-o', '--operator', action='store', dest='opr',
-                            help='specify username')
+                            help='specify operator')
     ARG_PARSER.add_argument('-p', '--payload', action='store',
                             dest='payload', help='specify payload')
+    ARG_PARSER.add_argument('-q', '--query', action='store',
+                            dest='query', help='specify query')
     ARG_PARSER.add_argument('-P', '--parameter', action='store',
                             dest='param', help='specify parameters')
     ARG_PARSER.add_argument('-H', '--header', action='store', dest='header',
                             #default='application/json',
                             help='specify content-type header')
-#Http configuration, specify http methods
+    #Http configuration, specify http methods
     ARG_PARSER.add_argument('-PU', '--PUT', action='store_const', const='PUT',
                             dest='method', help='HTTP PUT')
     ARG_PARSER.add_argument('-PO', '--POST', action='store_const', const='POST',
@@ -60,7 +62,7 @@ def parse_arguments():
                             help='HTTP methods')
 
 
-#RackHD GET all API arguments, first two lowercase characters
+    #RackHD GET all API arguments, first two lowercase characters
     ARG_PARSER.add_argument('-co', action='store_const', dest='opr', const='configs',
                             help='Get all configs')
     ARG_PARSER.add_argument('-ca', action='store_const', dest='opr', const='catalogs',
@@ -88,7 +90,7 @@ def parse_arguments():
     ARG_PARSER.add_argument('-ib', action='store_const', dest='opr', const='ibms',
                             help='Get all ibms')
 
-#Frequently used id operations, Get id types from database
+    #Frequently used id operations, Get id types from database
     ARG_PARSER.add_argument('--cancel', '-C', action='store', default='',
                             help='delete active workflow via node id')
     ARG_PARSER.add_argument('--delete', '-D', action='store', default='',
@@ -100,7 +102,9 @@ def parse_arguments():
     ARG_PARSER.add_argument('--discovery', action='store', default='',
                             help='run discovery workflow')
     ARG_PARSER.add_argument('--mongo', action='store', default='',
-                            help='run discovery workflow')
+                            help='run get mongo data by ID')
+    ARG_PARSER.add_argument('--active', action='store', default='',
+                            help='run get active workflow by nodeId')
 
     #Service operation
     ARG_PARSER.add_argument('--services', action='store', dest='services',

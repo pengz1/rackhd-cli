@@ -6,7 +6,7 @@
 """
     Local utilities
 """
-
+import re
 from utils.mongo_utils import mongo as mongo
 
 def parse_position_node_args(position_args, known_args):
@@ -31,6 +31,38 @@ def parse_position_service_args(position_args, known_args):
         known_args.services = 'all'
     else:
         known_args.services = position_args[0].split(',')
+
+def parse_position_sku_args(position_args, known_args):
+    """
+    parse position arguments for node
+    """
+    if len(position_args) == 2:
+        arg = position_args[1]
+        if arg.startswith('@'):
+            known_args.payload = arg
+            known_args.subopr = 'pack'
+            known_args.method = 'post'
+            if known_args.identity:
+                known_args.method = 'put'
+        else:
+            known_args.identity = position_args[1]
+    elif len(position_args) == 3:
+        known_args.identity = position_args[1]
+        pattern = re.compile('[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}')
+        if not pattern.match(known_args.identity):
+            raise Exception("unrecognized arguments: {}".format(position_args))
+        if position_args[2].startswith('@'):
+            known_args.payload = position_args[2]
+        else:
+            raise Exception("unrecognized arguments: {}".format(position_args))
+        known_args.subopr = 'pack'
+        known_args.method = 'put'
+    elif len(position_args) > 3:
+        raise Exception("unrecognized arguments: {}".format(position_args))
+    if known_args.opr:
+        known_args.subopr = known_args.opr
+    known_args.opr = 'skus'
+    return known_args
 
 def parse_position_install_args():
     """
@@ -67,7 +99,7 @@ def parse_all_known(known_args):
     """
     parse position arguments for node
     """
-    known_args.method = known_args.method or 'GET'
+    known_args.method = known_args.method
     if known_args.cancel:
         known_args.opr = 'nodes'
         known_args.subopr = 'workflows'
@@ -89,6 +121,12 @@ def parse_all_known(known_args):
         known_args.opr = mongo.find_collection_by_id(known_args.delete)
         known_args.identity = known_args.delete
         known_args.method = 'DELETE'
+        return known_args
+    if known_args.active:
+        known_args.opr = "nodes"
+        known_args.subopr = "workflows"
+        known_args.identity = known_args.active
+        known_args.query = 'active=true'
         return known_args
     if known_args.identity:
         if not known_args.opr:
