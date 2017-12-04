@@ -17,6 +17,8 @@ def parse_arguments():
     #common arguments, lowercase
     ARG_PARSER.add_argument('-ip', action='store',
                             help='specify ip adress')
+    ARG_PARSER.add_argument('--min', action='store_true',
+                            help='minimum output payload')
     ARG_PARSER.add_argument('-pwd', action='store', default='admin',
                             help='specify password')
     ARG_PARSER.add_argument('-user', action='store', default='admin',

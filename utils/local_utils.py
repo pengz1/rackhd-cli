@@ -13,13 +13,13 @@ import re
 import json
 import subprocess
 
-def get_configurations(path):
+def get_configurations(filename):
     """
     Get configurations from configure files
     """
     # configure file should be under command executing path
     # path = os.path.split(os.path.realpath(__file__))[0]
-    path = os.path.join(path, "config.json")
+    path = os.path.join(CONFIG_PATH, filename)
     rackhd_bist_config = robust_load_json_file(path)
     if rackhd_bist_config["exit_code"]:
         print rackhd_bist_config["message"]
@@ -137,4 +137,4 @@ def create_rackhd_api(option):
         method, content_type, url, api, param, payload)
     return command
 CONFIG_PATH = "/".join((os.path.split(os.path.realpath(__file__))[0]).split('/')[:-1]) + '/config/'
-CONFIGURATION = get_configurations(CONFIG_PATH)
+CONFIGURATION = get_configurations("config.json")

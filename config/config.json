@@ -9,7 +9,7 @@
         "name": "mongo",
         "address": "localhost",
         "port": 27017,
-        "db": "pxe",
+        "db": "rackhd",
         "collections": ["nodes", "workitems", "skus", "obms", "lookups", "ibms", "workflows", "catalogs"]
     }
 }

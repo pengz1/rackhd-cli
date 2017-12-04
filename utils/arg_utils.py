@@ -85,7 +85,7 @@ def parse_position_identity_args(position_args, known_args):
     """
     parse position arguments for mongo identity
     """
-    assert len(position_args) == 1, 'unrecognized positional arguments for mongo operation'
+    assert len(position_args) == 1, 'unrecognized positional arguments'
     collection = mongo.find_collection_by_id(position_args[0])
     if collection == 'workitems':
         known_args.opr = 'pollers'
