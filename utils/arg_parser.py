@@ -122,6 +122,8 @@ def parse_arguments():
     ARG_PARSER.add_argument('--service', action='store', dest='service',
                             choices=['start', 'stop', 'restart', 'version'],
                             help='get RackHD version operation')
+    ARG_PARSER.add_argument('--clear', action='store_const', dest='service', const='clear',
+                            help='get RackHD version operation')
     # BIST test
     ARG_PARSER.add_argument('-t', action='store', dest='test',
                             help='initiate RackHD BIST test')

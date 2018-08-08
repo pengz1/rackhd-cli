@@ -4,6 +4,7 @@ RackHD Service operations
 """
 import os
 import utils.local_utils as utils
+from mongo_utils import mongo
 
 class RackhdServices(object):
     """
@@ -146,3 +147,9 @@ class RackhdServices(object):
         """
         self.stop_rackhd_services()
         self.start_rackhd_services()
+
+    def clear_rackhd_services(self):
+        """
+        Clear RackHD Database
+        """
+        mongo.clear_rackhd_db()

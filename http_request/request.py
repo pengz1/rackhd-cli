@@ -58,7 +58,9 @@ def request(options):
         payload = f
         # multipart/form-data requires boundary
         headers = {'content-type': 'application/x-www-form-urlencoded'}
-
+    
+    options["header"] = headers
+    
     res = requests.request(
         method=method or "POST",
         url=options['url'],

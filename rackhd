@@ -120,8 +120,9 @@ def api_output_view(result, args, options):
     else:
         content = result.content
 
-    print "{{\"data\": {}, \"_api\": \"-X{} {}\", \"_status\": {}}}".format(
-        content or "\"\"", options["method"], result.url, result.status_code
+    print "{{\"data\": {}, \"_api\": \"-X {} -H {} {}\", \"_status\": {}}}".format(
+        content or "\"\"", options["method"], options["header"],
+        result.url, result.status_code
     )
 
 
